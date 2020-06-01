@@ -1,5 +1,5 @@
 # USAGE
-# python detect_age_video.py --face face_detector --age age_detector
+# python detect_age_video.py --face face_detector --age age_gender_detector --gender age_gender_detector
 
 # import the necessary packages
 from imutils.video import VideoStream
@@ -87,6 +87,8 @@ ap.add_argument("-f", "--face", required=True,
 	help="path to face detector model directory")
 ap.add_argument("-a", "--age", required=True,
 	help="path to age detector model directory")
+ap.add_argument("-g", "--gender", required=True,
+	help="path to gender detector model directory")
 ap.add_argument("-c", "--confidence", type=float, default=0.5,
 	help="minimum probability to filter weak detections")
 args = vars(ap.parse_args())
@@ -104,10 +106,11 @@ prototxtPath = os.path.sep.join([args["age"], "age_deploy.prototxt"])
 weightsPath = os.path.sep.join([args["age"], "age_net.caffemodel"])
 ageNet = cv2.dnn.readNet(prototxtPath, weightsPath)
 
-#mod
-gender_net = cv2.dnn.readNetFromCaffe(
-                        "age_gender_models/deploy_gender.prototxt",
-                        "age_gender_models/gender_net.caffemodel")
+# load our serialized gender detector model from disk
+print("[INFO] loading age detector model...")
+prototxtPath = os.path.sep.join([args["gender"], "gender_deploy.prototxt"])
+weightsPath = os.path.sep.join([args["gender"], "gender_net.caffemodel"])
+gender_net = cv2.dnn.readNet(prototxtPath, weightsPath)
 
 # initialize the video stream and allow the camera sensor to warm up
 print("[INFO] starting video stream...")
